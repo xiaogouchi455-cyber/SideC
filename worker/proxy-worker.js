@@ -2,6 +2,7 @@
 const BILI_API = "https://api.bilibili.com";
 
 const ROUTES = [
+  "/bili/spi",
   "/bili/search",
   "/bili/view",
   "/bili/resolve"
@@ -21,21 +22,14 @@ function json(data, status = 200) {
   });
 }
 
+// 统一处理 B 站 JSON 响应
 async function readBiliJson(response) {
   const text = await response.text();
 
+  let data;
+
   try {
-    const data = JSON.parse(text);
-
-    if (!response.ok) {
-      return json({
-        error: "Bilibili API request failed",
-        status: response.status,
-        data
-      }, response.status);
-    }
-
-    return json(data);
+    data = JSON.parse(text);
   } catch {
     return json({
       error: "Bilibili returned non-JSON content",
@@ -44,13 +38,49 @@ async function readBiliJson(response) {
       preview: text.slice(0, 500)
     }, 502);
   }
+
+  if (!response.ok) {
+    return json({
+      error: "Bilibili API request failed",
+      status: response.status,
+      data
+    }, response.status);
+  }
+
+  return json(data);
 }
 
+// 统一请求头
+function biliHeaders() {
+  return {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Referer": "https://www.bilibili.com/",
+    "Origin": "https://www.bilibili.com",
+    "Accept": "application/json, text/plain, */*"
+  };
+}
+
+// 1. B站 SPI 设备指纹接口
+async function getBiliSPI() {
+  const apiUrl =
+    BILI_API + "/x/frontend/finger/spi";
+
+  const response = await fetch(apiUrl, {
+    method: "GET",
+    headers: biliHeaders()
+  });
+
+  return readBiliJson(response);
+}
+
+// 2. 视频搜索
 async function searchVideo(url) {
   const keyword = url.searchParams.get("keyword");
 
   if (!keyword) {
-    return json({ error: "Missing keyword parameter" }, 400);
+    return json({
+      error: "Missing keyword parameter"
+    }, 400);
   }
 
   const page = Math.max(
@@ -67,16 +97,13 @@ async function searchVideo(url) {
   apiUrl.searchParams.set("page", String(page));
 
   const response = await fetch(apiUrl.toString(), {
-    headers: {
-      "User-Agent": "Mozilla/5.0",
-      "Referer": "https://www.bilibili.com/",
-      "Accept": "application/json, text/plain, */*"
-    }
+    headers: biliHeaders()
   });
 
   return readBiliJson(response);
 }
 
+// 3. 视频详情
 async function viewVideo(url) {
   const bvid = url.searchParams.get("bvid");
   const aid = url.searchParams.get("aid");
@@ -98,21 +125,20 @@ async function viewVideo(url) {
   }
 
   const response = await fetch(apiUrl.toString(), {
-    headers: {
-      "User-Agent": "Mozilla/5.0",
-      "Referer": "https://www.bilibili.com/",
-      "Accept": "application/json, text/plain, */*"
-    }
+    headers: biliHeaders()
   });
 
   return readBiliJson(response);
 }
 
+// 4. b23.tv 短链接解析
 async function resolveShortLink(url) {
   const shortUrl = url.searchParams.get("url");
 
   if (!shortUrl) {
-    return json({ error: "Missing url parameter" }, 400);
+    return json({
+      error: "Missing url parameter"
+    }, 400);
   }
 
   let parsed;
@@ -120,23 +146,24 @@ async function resolveShortLink(url) {
   try {
     parsed = new URL(shortUrl);
   } catch {
-    return json({ error: "Invalid URL" }, 400);
+    return json({
+      error: "Invalid URL"
+    }, 400);
   }
 
   if (
-    parsed.hostname !== "b23.tv" &&
-    parsed.hostname !== "www.b23.tv"
+    parsed.protocol !== "https:" ||
+    !["b23.tv", "www.b23.tv"].includes(parsed.hostname)
   ) {
-    return json({ error: "Only b23.tv links are supported" }, 400);
+    return json({
+      error: "Only HTTPS b23.tv links are supported"
+    }, 400);
   }
 
   const response = await fetch(parsed.toString(), {
     method: "GET",
     redirect: "manual",
-    headers: {
-      "User-Agent": "Mozilla/5.0",
-      "Referer": "https://www.bilibili.com/"
-    }
+    headers: biliHeaders()
   });
 
   const location = response.headers.get("Location");
@@ -161,10 +188,12 @@ async function resolveShortLink(url) {
   }, 502);
 }
 
+// Worker 主入口
 export default {
   async fetch(request) {
     const url = new URL(request.url);
 
+    // CORS 预检
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -173,7 +202,9 @@ export default {
     }
 
     if (request.method !== "GET") {
-      return json({ error: "Method not allowed" }, 405);
+      return json({
+        error: "Method not allowed"
+      }, 405);
     }
 
     try {
@@ -182,8 +213,12 @@ export default {
           return json({
             ok: true,
             name: "SIDE C Proxy",
+            version: "2.0",
             routes: ROUTES
           });
+
+        case "/bili/spi":
+          return await getBiliSPI();
 
         case "/bili/search":
           return await searchVideo(url);
