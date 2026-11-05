@@ -1,7 +1,7 @@
 (() => {
   const KEYS = { albums: 'sidec_web_albums', videos: 'sidec_web_videos', theme: 'sidec_web_theme', sponsorText: 'sidec_web_commission_text_v1', settings: 'sidec_web_settings', playlists: 'sidec_web_playlists', views: 'sidec_web_views' };
   const DRAFT = 'sidec_web_draft';
-  const DEFAULT_SPONSOR_TEXT = '感谢大家使用><其实更想要约稿支持我！\n孩子想要喝星巴克，所以有没有人向我约这种双人插呀TT\n如果有宝子们喜欢的请小红书私信我( ◜ω◝و)و 🎶';
+  const DEFAULT_SPONSOR_TEXT = '感谢大家使用><其实更想要约稿支持我！\n孩子想要喝星巴克，所以有没有人向我约这种双人插呀TT\n小红书id：9567292790\n如果有宝子们喜欢的请小红书私信我( ◜ω◝و)و 🎶';
   const $ = (s, root=document) => root.querySelector(s);
   const $$ = (s, root=document) => [...root.querySelectorAll(s)];
   const today = () => new Date().toISOString().slice(0,10);
