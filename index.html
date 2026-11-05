@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0e13" />
+  <meta name="description" content="SIDE C — 你的私人音乐与MV档案。让每张专辑，都有归处。" />
+  <title>SIDE C — 让每张专辑，都有归处。</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div><div class="ambient ambient-three"></div>
+
+  <!-- 开屏界面 -->
+  <section class="splash" id="splash" aria-label="SIDE C 开屏">
+    <div class="splash-bg" aria-hidden="true">
+      <span class="splash-orb orb-a"></span><span class="splash-orb orb-b"></span><span class="splash-orb orb-c"></span>
+      <span class="splash-grain"></span>
+    </div>
+    <div class="splash-inner">
+      <div class="splash-mark" aria-hidden="true">C.</div>
+      <h1 class="splash-slogan">让每张专辑，<br /><em>都有归处。</em></h1>
+      <p class="splash-sub">SIDE C · 你的私人音乐与 MV 档案</p>
+      <button class="splash-enter" id="splashEnter" type="button">进入档案 <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="splash-foot">
+      <span class="splash-progress"><i id="splashProgress"></i></span>
+      <span class="splash-foot-text">PERSONAL ARCHIVE · LISTEN · KEEP · RETURN</span>
+    </div>
+  </section>
+
+  <div class="app-shell">
+    <aside class="sidebar glass">
+      <a class="brand-lockup" href="#home" aria-label="SIDE C 首页"><span class="brand-mark">C.</span><span><b>SIDE C</b><small>YOUR PERSONAL ARCHIVE</small></span></a>
+      <nav class="main-nav" aria-label="主导航">
+        <a href="#home" data-nav="home"><span>⌂</span> 首页</a>
+        <a href="#music" data-nav="music"><span>♫</span> 音乐档案</a>
+        <a href="#mv" data-nav="mv"><span>▣</span> MV</a>
+        <a href="#playlist" data-nav="playlist"><span>♡</span> 歌单</a>
+        <a href="#timeline" data-nav="timeline"><span>◷</span> 时间线</a>
+        <a href="#profile" data-nav="profile"><span>◌</span> 我的空间</a>
+      </nav>
+      <div class="sidebar-bottom"><div class="side-note">A LITTLE PLACE<br/>FOR WHAT YOU LOVE.</div><button class="theme-toggle" id="themeToggle" type="button">◐ <span>切换外观</span></button></div>
+    </aside>
+
+    <main class="main-area">
+      <header class="mobile-header"><a class="brand-lockup" href="#home"><span class="brand-mark">C.</span><span><b>SIDE C</b><small>PERSONAL ARCHIVE</small></span></a><button class="icon-button" id="mobileTheme" aria-label="切换外观">◐</button></header>
+      <div id="view" class="view-container" aria-live="polite"></div>
+      <footer class="mobile-nav" aria-label="底部导航">
+        <a href="#home" data-nav="home"><span>⌂</span><small>首页</small></a><a href="#music" data-nav="music"><span>♫</span><small>音乐</small></a><a href="#mv" data-nav="mv"><span>▣</span><small>MV</small></a><a href="#playlist" data-nav="playlist"><span>♡</span><small>歌单</small></a><a href="#profile" data-nav="profile"><span>◌</span><small>我的</small></a>
+      </footer>
+    </main>
+  </div>
+
+  <!-- 支持作者 -->
+  <section class="sponsor-modal" id="sponsorModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="sponsorTitle">
+    <button class="modal-backdrop" type="button" data-close-sponsor aria-label="关闭支持窗口"></button>
+    <div class="sponsor-dialog glass">
+      <button class="modal-close" type="button" data-close-sponsor aria-label="关闭">×</button>
+      <div class="eyebrow">SUPPORT THE ARTIST</div>
+      <h2 id="sponsorTitle">支持作者</h2>
+      <a class="commission-image-link" href="./assets/sponsor-card.jpg" target="_blank" rel="noopener" aria-label="打开原图查看作品与小红书二维码">
+        <img class="commission-card-image" src="./assets/sponsor-card.jpg" alt="双人插画作品与小红书二维码" />
+      </a>
+      <p class="sponsor-copy" id="sponsorCopy">感谢大家使用><其实更想要约稿支持我！
+孩子想要喝星巴克，所以有没有人向我约这种双人插呀TT
+如果有宝子们喜欢的请小红书私信我( ◜ω◝و)و 🎶</p>
+      <p class="sponsor-thanks">THANK YOU FOR VISITING SIDE C.</p>
+    </div>
+  </section>
+
+  <!-- 通用弹层 -->
+  <section class="sheet-modal" id="sheetModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="modal-backdrop" type="button" data-close-sheet aria-label="关闭弹层"></button>
+    <div class="sheet glass">
+      <button class="modal-close" type="button" data-close-sheet aria-label="关闭">×</button>
+      <div id="sheetBody"></div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>

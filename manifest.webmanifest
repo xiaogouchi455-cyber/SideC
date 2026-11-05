@@ -1,0 +1,10 @@
+{
+  "name": "SIDE C — 让每张专辑，都有归处。",
+  "short_name": "SIDE C",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#0b0c10",
+  "icons": [{"src":"./assets/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
